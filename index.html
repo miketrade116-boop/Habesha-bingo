@@ -1,12 +1,186 @@
-<div class="main-box">
-    <div class="status-banner" id="statusBanner">⏳ Game starting in: 25s (Pick Card)</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Addis Bingo</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #8c73a7;
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #333;
+    }
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 8px;
+    }
+    .nav-btn {
+      background: #ffffff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 12px;
+      color: #333;
+    }
+    .main-box {
+      background: #ffffff;
+      width: 100%;
+      max-width: 400px;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .status-banner {
+      background: #fef08a;
+      color: #854d0e;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: bold;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    /* 1-100 Selection Grid */
+    #selectionSection {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .selection-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 3px;
+      width: 100%;
+      background: #73598e;
+      padding: 6px;
+      border-radius: 8px;
+    }
+    .card-tile {
+      background: #e2d9eb;
+      border-radius: 4px;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 11px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .card-tile.selected {
+      background: #f97316 !important;
+      color: #ffffff !important;
+    }
+    /* 5x5 Bingo Game Screen */
+    #bingoBoard {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      align-items: center;
+    }
+    .caller-display {
+      background: #1e1b4b;
+      color: #38bdf8;
+      font-size: 30px;
+      font-weight: 900;
+      padding: 12px 20px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      text-align: center;
+      width: 100%;
+      letter-spacing: 2px;
+    }
+    .b-headers {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      width: 100%;
+      max-width: 320px;
+      margin-bottom: 4px;
+    }
+    .b-header {
+      background: #4f46e5;
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 16px;
+      text-align: center;
+      padding: 6px 0;
+      border-radius: 6px;
+    }
+    .bingo-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      width: 100%;
+      max-width: 320px;
+      margin-bottom: 12px;
+    }
+    .b-cell {
+      background: #f8fafc;
+      border: 2px solid #cbd5e1;
+      border-radius: 6px;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+    }
+    .b-cell.marked {
+      background: #22c55e !important;
+      color: #ffffff !important;
+      border-color: #16a34a !important;
+    }
+    .b-cell.free {
+      background: #f59e0b;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 900;
+    }
+    .btn-bingo {
+      width: 100%;
+      padding: 14px;
+      background: #22c55e;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 20px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
 
-    <!-- 1-100 Grid Section -->
+  <div class="top-nav">
+    <button class="nav-btn">Wallet: 50 ETB</button>
+    <button class="nav-btn">Stake: 10 ETB</button>
+  </div><div class="main-box">
+    <div class="status-banner" id="statusBanner">⏳ Game starting in: 20s (Select a Card)</div>
+
+    <!-- Phase 1: 1-100 Selection Grid -->
     <div id="selectionSection">
       <div class="selection-grid" id="cardGrid"></div>
     </div>
 
-    <!-- 5x5 Active Ticket Section -->
+    <!-- Phase 2: Active 5x5 Game Board -->
     <div id="bingoBoard">
       <div class="caller-display" id="callDisplay">STARTING CALLS...</div>
       
@@ -28,18 +202,20 @@
     if (tg) tg.expand();
 
     let selectedCard = 1;
-    let countdown = 20; // 20s auto lobby countdown
+    let countdown = 15;
     let calledNumbers = new Set();
     let markedCells = new Set(["2,2"]);
 
-    // Build the 1-100 grid immediately
+    // Generate 1-100 Grid
     const cardGrid = document.getElementById('cardGrid');
     for (let i = 1; i <= 100; i++) {
       const tile = document.createElement('div');
       tile.className = 'card-tile' + (i === 1 ? ' selected' : '');
       tile.innerText = i;
       tile.onclick = function() {
-        document.querySelectorAll('.card-tile').forEach(t => t.classList.remove('selected'));
+        document.querySelectorAll('.card-tile').forEach(function(t) {
+          t.classList.remove('selected');
+        });
         tile.classList.add('selected');
         selectedCard = i;
         document.getElementById('statusBanner').innerText = '⏳ Game starting in: ' + countdown + 's (Card #' + i + ' Chosen)';
@@ -47,18 +223,18 @@
       cardGrid.appendChild(tile);
     }
 
-    // Auto Countdown Timer
+    // Lobby Countdown
     const timerInterval = setInterval(function() {
       countdown--;
       document.getElementById('statusBanner').innerText = '⏳ Game starting in: ' + countdown + 's (Card #' + selectedCard + ' Chosen)';
 
       if (countdown <= 0) {
         clearInterval(timerInterval);
-        startActiveBingoGame();
+        startActiveGame();
       }
     }, 1000);
 
-    // Voice Calling Feature
+    // Audio Voice Caller
     function speak(text) {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
@@ -69,7 +245,7 @@
       }
     }
 
-    // Generate 5x5 Ticket based on selected card
+    // Deterministic 5x5 Card Matrix
     function generateTicket(seed) {
       function getColumn(min, max) {
         let pool = [];
@@ -91,7 +267,7 @@
       return matrix;
     }
 
-    function startActiveBingoGame() {
+    function startActiveGame() {
       document.getElementById('selectionSection').style.display = 'none';
       document.getElementById('statusBanner').innerText = 'Card #' + selectedCard + ' - Match 5 to Win!';
       document.getElementById('bingoBoard').style.display = 'flex';
@@ -111,8 +287,8 @@
             cell.innerText = '★ FREE';
           } else {
             cell.innerText = val;
-            cell.onclick = function() {if (calledNumbers.has(val)) {
-                cell.classList.add('marked');
+            cell.onclick = function() {
+              if (calledNumbers.has(val)) {cell.classList.add('marked');
                 markedCells.add(r + ',' + c);
                 if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
               } else {
@@ -124,19 +300,19 @@
         }
       }
 
-      // Begin Voice Number Draws (1-75)
-      let numberPool = [];
-      for (let i = 1; i <= 75; i++) numberPool.push(i);
-      numberPool.sort(function() { return Math.random() - 0.5; });
+      // Start Live Draws
+      let pool = [];
+      for (let i = 1; i <= 75; i++) pool.push(i);
+      pool.sort(function() { return Math.random() - 0.5; });
 
       let drawIdx = 0;
       const drawInterval = setInterval(function() {
-        if (drawIdx >= numberPool.length) {
+        if (drawIdx >= pool.length) {
           clearInterval(drawInterval);
           return;
         }
 
-        const num = numberPool[drawIdx];
+        const num = pool[drawIdx];
         calledNumbers.add(num);
 
         let letter = 'B';
@@ -156,13 +332,13 @@
     function claimBingo() {
       let won = false;
       for (let r = 0; r < 5; r++) {
-        if ([0,1,2,3,4].every(c => markedCells.has(r + ',' + c))) won = true;
+        if ([0,1,2,3,4].every(function(c) { return markedCells.has(r + ',' + c); })) won = true;
       }
       for (let c = 0; c < 5; c++) {
-        if ([0,1,2,3,4].every(r => markedCells.has(r + ',' + c))) won = true;
+        if ([0,1,2,3,4].every(function(r) { return markedCells.has(r + ',' + c); })) won = true;
       }
-      if ([0,1,2,3,4].every(i => markedCells.has(i + ',' + i))) won = true;
-      if ([0,1,2,3,4].every(i => markedCells.has(i + ',' + (4-i)))) won = true;
+      if ([0,1,2,3,4].every(function(i) { return markedCells.has(i + ',' + i); })) won = true;
+      if ([0,1,2,3,4].every(function(i) { return markedCells.has(i + ',' + (4-i)); })) won = true;
 
       if (won) {
         speak('Bingo! Winner!');
