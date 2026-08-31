@@ -1,9 +1,16 @@
-<!-- Phase 2: Active 5x5 Board with Live Voice Caller -->
-    <div class="bingo-board" id="bingoBoard">
+<div class="main-box">
+    <div class="status-banner" id="statusBanner">⏳ Game starting in: 25s (Pick Card)</div>
+
+    <!-- 1-100 Grid Section -->
+    <div id="selectionSection">
+      <div class="selection-grid" id="cardGrid"></div>
+    </div>
+
+    <!-- 5x5 Active Ticket Section -->
+    <div id="bingoBoard">
       <div class="caller-display" id="callDisplay">STARTING CALLS...</div>
       
-      <!-- B I N G O Header -->
-      <div class="bingo-grid" style="margin-bottom: 2px;">
+      <div class="b-headers">
         <div class="b-header">B</div>
         <div class="b-header">I</div>
         <div class="b-header">N</div>
@@ -11,9 +18,7 @@
         <div class="b-header">O</div>
       </div>
 
-      <!-- 5x5 Interactive Card -->
       <div class="bingo-grid" id="ticketGrid"></div>
-
       <button class="btn-bingo" onclick="claimBingo()">🎉 BINGO!</button>
     </div>
   </div>
@@ -22,54 +27,62 @@
     const tg = window.Telegram?.WebApp;
     if (tg) tg.expand();
 
-    let selectedCard = 1; // Default to card 1 if player doesn't choose
-    let countdown = 20;   // 20s countdown for quick testing (change to 60 for full lobby)
+    let selectedCard = 1;
+    let countdown = 20; // 20s auto lobby countdown
     let calledNumbers = new Set();
-    let playerMatrix = [];
-    let markedCells = new Set(["2,2"]); // Center FREE is automatically marked
+    let markedCells = new Set(["2,2"]);
 
-    // Build 1-100 Card Picker
+    // Build the 1-100 grid immediately
     const cardGrid = document.getElementById('cardGrid');
     for (let i = 1; i <= 100; i++) {
       const tile = document.createElement('div');
-      tile.className = 'card-tile';
-      if (i === 1) tile.classList.add('selected'); // Highlight default
+      tile.className = 'card-tile' + (i === 1 ? ' selected' : '');
       tile.innerText = i;
-      tile.onclick = () => {
+      tile.onclick = function() {
         document.querySelectorAll('.card-tile').forEach(t => t.classList.remove('selected'));
         tile.classList.add('selected');
         selectedCard = i;
-        document.getElementById('statusBanner').innerText = ⏳ Round starts in: ${countdown}s (Card #${i} Chosen);
+        document.getElementById('statusBanner').innerText = '⏳ Game starting in: ' + countdown + 's (Card #' + i + ' Chosen)';
       };
       cardGrid.appendChild(tile);
     }
 
-    // Automatic Countdown Loop
-    const timerInterval = setInterval(() => {
+    // Auto Countdown Timer
+    const timerInterval = setInterval(function() {
       countdown--;
-      document.getElementById('statusBanner').innerText = ⏳ Round starts in: ${countdown}s (Card #${selectedCard} Chosen);
+      document.getElementById('statusBanner').innerText = '⏳ Game starting in: ' + countdown + 's (Card #' + selectedCard + ' Chosen)';
 
       if (countdown <= 0) {
         clearInterval(timerInterval);
-        startActiveGame();
+        startActiveBingoGame();
       }
     }, 1000);
 
-    // Generate Standard B-I-N-G-O Ticket (1-75)
+    // Voice Calling Feature
+    function speak(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.rate = 0.85;
+        msg.pitch = 1.0;
+        window.speechSynthesis.speak(msg);
+      }
+    }
+
+    // Generate 5x5 Ticket based on selected card
     function generateTicket(seed) {
-      function getSubarray(start, count) {
-        let nums = [];
-        for (let i = start; i < start + 15; i++) nums.push(i);
-        // Deterministic pseudo-random based on seed
-        nums.sort(() => ((seed * 9301 + 49297) % 233280) / 233280 - 0.5);
-        return nums.slice(0, count);
+      function getColumn(min, max) {
+        let pool = [];
+        for (let i = min; i <= max; i++) pool.push(i);
+        pool.sort(function() { return Math.random() - 0.5; });
+        return pool.slice(0, 5);
       }
 
-      const B = getSubarray(1, 5);
-      const I = getSubarray(16, 5);
-      const N = getSubarray(31, 5);
-      const G = getSubarray(46, 5);
-      const O = getSubarray(61, 5);
+      const B = getColumn(1, 15);
+      const I = getColumn(16, 30);
+      const N = getColumn(31, 45);
+      const G = getColumn(46, 60);
+      const O = getColumn(61, 75);
 
       let matrix = [];
       for (let r = 0; r < 5; r++) {
@@ -78,170 +91,18 @@
       return matrix;
     }
 
-    // Natural Audio Speech Synthesizer
-    function speakNumber(text) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.rate = 0.85;
-        msg.pitch = 1.1;
-        window.speechSynthesis.speak(msg);
-      }
-    }
-
-    function startActiveGame() {
-      // Switch UI from 1-100 to 5x5 board
-      cardGrid.style.display = 'none';
-      document.getElementById('statusBanner').innerText = Card #${selectedCard} Active - Listen & Mark your Card!;
+    function startActiveBingoGame() {
+      document.getElementById('selectionSection').style.display = 'none';
+      document.getElementById('statusBanner').innerText = 'Card #' + selectedCard + ' - Match 5 to Win!';
       document.getElementById('bingoBoard').style.display = 'flex';
 
-      playerMatrix = generateTicket(selectedCard);
-      renderTicket(playerMatrix);
-
-      // Number Caller Engine (1-75)
-      let pool = Array.from({length: 75}, (_, i) => i + 1).sort(() => Math.random() - 0.5);
-      let callIndex = 0;
-
-      const caller = setInterval(() => {
-        if (callIndex >= pool.length) {
-          clearInterval(caller);
-          return;
-        }
-
-        const num = pool[callIndex];
-        calledNumbers.add(num);<!-- Phase 2: Active 5x5 Board with Live Voice Caller -->
-    <div class="bingo-board" id="bingoBoard">
-      <div class="caller-display" id="callDisplay">STARTING CALLS...</div>
-      
-      <!-- B I N G O Header -->
-      <div class="bingo-grid" style="margin-bottom: 2px;">
-        <div class="b-header">B</div>
-        <div class="b-header">I</div>
-        <div class="b-header">N</div>
-        <div class="b-header">G</div>
-        <div class="b-header">O</div>
-      </div>
-
-      <!-- 5x5 Interactive Card -->
-      <div class="bingo-grid" id="ticketGrid"></div>
-
-      <button class="btn-bingo" onclick="claimBingo()">🎉 BINGO!</button>
-    </div>
-  </div>
-
-  <script>
-    const tg = window.Telegram?.WebApp;
-    if (tg) tg.expand();
-
-    let selectedCard = 1; // Default to card 1 if player doesn't choose
-    let countdown = 20;   // 20s countdown for quick testing (change to 60 for full lobby)
-    let calledNumbers = new Set();
-    let playerMatrix = [];
-    let markedCells = new Set(["2,2"]); // Center FREE is automatically marked
-
-    // Build 1-100 Card Picker
-    const cardGrid = document.getElementById('cardGrid');
-    for (let i = 1; i <= 100; i++) {
-      const tile = document.createElement('div');
-      tile.className = 'card-tile';
-      if (i === 1) tile.classList.add('selected'); // Highlight default
-      tile.innerText = i;
-      tile.onclick = () => {
-        document.querySelectorAll('.card-tile').forEach(t => t.classList.remove('selected'));
-        tile.classList.add('selected');
-        selectedCard = i;
-        document.getElementById('statusBanner').innerText = ⏳ Round starts in: ${countdown}s (Card #${i} Chosen);
-      };
-      cardGrid.appendChild(tile);
-    }
-
-    // Automatic Countdown Loop
-    const timerInterval = setInterval(() => {
-      countdown--;
-      document.getElementById('statusBanner').innerText = ⏳ Round starts in: ${countdown}s (Card #${selectedCard} Chosen);
-
-      if (countdown <= 0) {
-        clearInterval(timerInterval);
-        startActiveGame();
-      }
-    }, 1000);
-
-    // Generate Standard B-I-N-G-O Ticket (1-75)
-    function generateTicket(seed) {
-      function getSubarray(start, count) {
-        let nums = [];
-        for (let i = start; i < start + 15; i++) nums.push(i);
-        // Deterministic pseudo-random based on seed
-        nums.sort(() => ((seed * 9301 + 49297) % 233280) / 233280 - 0.5);
-        return nums.slice(0, count);
-      }
-
-      const B = getSubarray(1, 5);
-      const I = getSubarray(16, 5);
-      const N = getSubarray(31, 5);
-      const G = getSubarray(46, 5);
-      const O = getSubarray(61, 5);
-
-      let matrix = [];
-      for (let r = 0; r < 5; r++) {
-        matrix.push([B[r], I[r], r === 2 ? 'FREE' : N[r], G[r], O[r]]);
-      }
-      return matrix;
-    }
-
-    // Natural Audio Speech Synthesizer
-    function speakNumber(text) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.rate = 0.85;
-        msg.pitch = 1.1;
-        window.speechSynthesis.speak(msg);
-      }
-    }
-
-    function startActiveGame() {
-      // Switch UI from 1-100 to 5x5 board
-      cardGrid.style.display = 'none';
-      document.getElementById('statusBanner').innerText = Card #${selectedCard} Active - Listen & Mark your Card!;
-      document.getElementById('bingoBoard').style.display = 'flex';
-
-      playerMatrix = generateTicket(selectedCard);
-      renderTicket(playerMatrix);
-
-      // Number Caller Engine (1-75)
-      let pool = Array.from({length: 75}, (_, i) => i + 1).sort(() => Math.random() - 0.5);
-      let callIndex = 0;
-
-      const caller = setInterval(() => {
-        if (callIndex >= pool.length) {
-          clearInterval(caller);
-          return;
-        }
-
-        const num = pool[callIndex];
-        calledNumbers.add(num);
-        let prefix = 'B';
-        if (num >= 16 && num <= 30) prefix = 'I';
-        else if (num >= 31 && num <= 45) prefix = 'N';
-        else if (num >= 46 && num <= 60) prefix = 'G';
-        else if (num >= 61 && num <= 75) prefix = 'O';
-
-        const callString = ${prefix} ${num};
-        document.getElementById('callDisplay').innerText = callString;
-        speakNumber(callString);
-
-        callIndex++;
-      }, 3500); // Speaks a new number every 3.5 seconds
-    }
-
-    function renderTicket(matrix) {
-      const grid = document.getElementById('ticketGrid');
-      grid.innerHTML = '';
+      const ticket = generateTicket(selectedCard);
+      const ticketGrid = document.getElementById('ticketGrid');
+      ticketGrid.innerHTML = '';
 
       for (let r = 0; r < 5; r++) {
         for (let c = 0; c < 5; c++) {
-          const val = matrix[r][c];
+          const val = ticket[r][c];
           const cell = document.createElement('div');
           cell.className = 'b-cell';
 
@@ -250,41 +111,64 @@
             cell.innerText = '★ FREE';
           } else {
             cell.innerText = val;
-            cell.onclick = () => {
-              if (calledNumbers.has(val)) {
+            cell.onclick = function() {if (calledNumbers.has(val)) {
                 cell.classList.add('marked');
-                markedCells.add(${r},${c});
-                if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+                markedCells.add(r + ',' + c);
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
               } else {
-                alert(Number ${val} hasn't been called yet!);
+                alert('Number ' + val + ' has not been called yet!');
               }
             };
           }
-          grid.appendChild(cell);
+          ticketGrid.appendChild(cell);
         }
       }
+
+      // Begin Voice Number Draws (1-75)
+      let numberPool = [];
+      for (let i = 1; i <= 75; i++) numberPool.push(i);
+      numberPool.sort(function() { return Math.random() - 0.5; });
+
+      let drawIdx = 0;
+      const drawInterval = setInterval(function() {
+        if (drawIdx >= numberPool.length) {
+          clearInterval(drawInterval);
+          return;
+        }
+
+        const num = numberPool[drawIdx];
+        calledNumbers.add(num);
+
+        let letter = 'B';
+        if (num >= 16 && num <= 30) letter = 'I';
+        else if (num >= 31 && num <= 45) letter = 'N';
+        else if (num >= 46 && num <= 60) letter = 'G';
+        else if (num >= 61 && num <= 75) letter = 'O';
+
+        const callout = letter + ' ' + num;
+        document.getElementById('callDisplay').innerText = callout;
+        speak(callout);
+
+        drawIdx++;
+      }, 3500);
     }
 
     function claimBingo() {
       let won = false;
-
-      // Check rows
       for (let r = 0; r < 5; r++) {
-        if ([0,1,2,3,4].every(c => markedCells.has(${r},${c}))) won = true;
+        if ([0,1,2,3,4].every(c => markedCells.has(r + ',' + c))) won = true;
       }
-      // Check columns
       for (let c = 0; c < 5; c++) {
-        if ([0,1,2,3,4].every(r => markedCells.has(${r},${c}))) won = true;
+        if ([0,1,2,3,4].every(r => markedCells.has(r + ',' + c))) won = true;
       }
-      // Check diagonals
-      if ([0,1,2,3,4].every(i => markedCells.has(${i},${i}))) won = true;
-      if ([0,1,2,3,4].every(i => markedCells.has(${i},${4-i}))) won = true;
+      if ([0,1,2,3,4].every(i => markedCells.has(i + ',' + i))) won = true;
+      if ([0,1,2,3,4].every(i => markedCells.has(i + ',' + (4-i)))) won = true;
 
       if (won) {
-        speakNumber("Bingo! Winner!");
-        alert("🎉 BINGO! Congratulations, you won the round!");
+        speak('Bingo! Winner!');
+        alert('🎉 BINGO! You won the round!');
       } else {
-        alert("❌ Invalid Bingo! You do not have 5 in a row yet.");
+        alert('❌ Invalid Bingo! Keep matching numbers.');
       }
     }
   </script>
