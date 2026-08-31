@@ -1,9 +1,8 @@
-html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Addis Bingo</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
@@ -74,8 +73,8 @@ html
       cursor: pointer;
     }
     .tile.selected {
-      background: #f97316;
-      color: #fff;
+      background: #f97316 !important;
+      color: #fff !important;
     }
     .tile.drawn {
       background: #22c55e !important;
@@ -133,7 +132,7 @@ html
   </div>
 
   <div class="fairness-box">
-    <strong>GAME HASH (FAIRNESS)</strong><br />
+    <strong>GAME HASH (FAIRNESS)</strong><br>
     <span id="gameHash">Generating SHA-256...</span>
   </div>
 
@@ -162,7 +161,7 @@ html
       document.querySelectorAll('.tile').forEach(t => t.classList.remove('selected'));
       el.classList.add('selected');
       selectedNumber = num;
-      statusText.innerText = Selected: ${num};
+      statusText.innerText = 'Selected: ' + num;
     }
 
     function resetBoard() {
@@ -193,14 +192,16 @@ html
         }
 
         const drawn = numbers[drawnCount];
-        tiles[drawn].classList.add('drawn');
+        if (tiles[drawn]) {
+          tiles[drawn].classList.add('drawn');
+        }
 
         if (drawn === selectedNumber) {
           clearInterval(interval);
           document.getElementById('startBtn').disabled = false;
-          statusText.innerText = 🎉 BINGO! Number ${drawn} WON!;
+          statusText.innerText = '🎉 BINGO! Number ' + drawn + ' WON!';
           if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-          alert(🎉 BINGO! You won!);
+          alert('🎉 BINGO! You won!');
           return;
         }
 
@@ -212,3 +213,4 @@ html
   </script>
 </body>
 </html>
+  
