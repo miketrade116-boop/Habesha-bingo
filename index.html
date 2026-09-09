@@ -15,43 +15,44 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-bottom: 70px;
+      padding-bottom: 20px;
     }
 
-    .alert-banner {
-      background: #ffcc00;
-      color: #ffffff;
+    /* PLAYER INFO BAR */
+    .player-info-bar {
+      background: #ffffff;
       width: 100%;
       max-width: 440px;
-      padding: 10px 14px;
-      font-size: 13px;
-      font-weight: 600;
-      line-height: 1.35;
+      padding: 12px 14px;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 10px;
-      position: relative;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 8px;
     }
 
-    .alert-icon {
-      font-size: 20px;
+    .player-name {
+      font-weight: 700;
+      color: #3e2d53;
+      font-size: 14px;
+    }
+
+    .player-wallet {
+      background: #10b981;
       color: #ffffff;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
     }
 
-    .alert-text {
-      flex: 1;
-      text-shadow: 0 1px 1px rgba(0,0,0,0.15);
+    .player-id {
+      font-size: 10px;
+      color: #6b7280;
     }
 
-    .alert-close {
-      font-size: 16px;
-      cursor: pointer;
-      color: #ffffff;
-      opacity: 0.9;
-    }
-
-    .lobby-content {
+    /* LOBBY CONTAINER */
+    .lobby-container {
       width: 100%;
       max-width: 440px;
       padding: 8px 14px;
@@ -60,196 +61,402 @@
       align-items: center;
     }
 
+    /* GRID */
     .grid-100 {
       display: grid;
       grid-template-columns: repeat(10, 1fr);
-      gap: 5px;
+      gap: 4px;
       width: 100%;
-      margin-top: 6px;
+      margin-bottom: 12px;
     }
 
     .tile-100 {
       background: #dbd2e8;
       color: #3e2d53;
       aspect-ratio: 1;
-      border-radius: 7px;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
-      font-family: Georgia, "Times New Roman", serif;
       cursor: pointer;
       user-select: none;
       box-shadow: 0 1px 2px rgba(0,0,0,0.06);
-      transition: transform 0.1s ease;
+      transition: all 0.2s ease;
     }
 
+    .tile-100:hover { transform: scale(1.05); }
     .tile-100:active { transform: scale(0.95); }
 
     .tile-100.selected {
       background: #f97316 !important;
       color: #ffffff !important;
       box-shadow: 0 2px 6px rgba(249,115,22,0.4);
-    }
-
-    .button-group {
-      display: flex;
-      gap: 14px;
-      width: 100%;
-      margin: 14px 0 10px 0;
-    }
-
-    .btn-refresh {
-      flex: 1;
-      background: #3b82f6;
-      color: #ffffff;
-      border: none;
-      padding: 12px 0;
-      border-radius: 24px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 3px 6px rgba(59,130,246,0.3);
-    }
-
-    .btn-refresh:hover {
-      background: #2563eb;
-    }
-
-    .btn-start {
-      flex: 1;
-      background: #d47a65;
-      color: #ffffff;
-      border: none;
-      padding: 12px 0;
-      border-radius: 24px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 3px 6px rgba(212,122,101,0.3);
-    }
-
-    .btn-start:hover {
-      background: #c76550;
-    }
-
-    .fairness-card {
-      background: #ffffff;
-      width: 100%;
-      border-radius: 12px;
-      padding: 12px 14px;
-      margin-top: 4px;
-      text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      position: relative;
-    }
-
-    .fairness-header {
       font-size: 11px;
-      font-weight: 800;
-      color: #2b2b2b;
-      margin-bottom: 4px;
     }
 
-    .fairness-id {
-      font-size: 10px;
+    /* TAB NAVIGATION */
+    .tab-nav {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      margin-bottom: 12px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 10px 0;
+      font-size: 13px;
+      font-weight: 700;
+      color: #9ca3af;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      color: #d47a65;
+      border-bottom-color: #d47a65;
+    }
+
+    /* TAB CONTENT */
+    .tab-content {
+      width: 100%;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 150px;
+      margin-bottom: 12px;
+    }
+
+    .tab-content.active {
+      display: flex;
+    }
+
+    /* WALLET TAB */
+    .wallet-box {
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .wallet-label {
+      font-size: 12px;
       color: #6b7280;
       margin-bottom: 6px;
     }
 
-    .hash-container {
-      font-size: 12px;
-      font-family: monospace;
-      color: #3e2d53;
-      word-break: break-all;
-      line-height: 1.4;
+    .wallet-amount {
+      font-size: 28px;
+      font-weight: 800;
+      color: #10b981;
+      margin-bottom: 10px;
     }
 
-    .copy-icon {
+    .add-funds-btn {
+      background: #3b82f6;
+      color: #ffffff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 18px;
+      font-size: 12px;
+      font-weight: 700;
       cursor: pointer;
-      color: #7b5997;
-      font-size: 16px;
+      box-shadow: 0 2px 4px rgba(59,130,246,0.3);
+    }
+
+    .add-funds-btn:hover { background: #2563eb; }
+
+    .transactions-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #3e2d53;
+      margin-top: 10px;
       margin-bottom: 8px;
     }
 
-    #bingoScreen {
+    .transaction-item {
+      background: #f9fafb;
+      padding: 10px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .transaction-info {
+      flex: 1;
+    }
+
+    .transaction-type {
+      font-weight: 700;
+      color: #3e2d53;
+    }
+
+    .transaction-time {
+      font-size: 10px;
+      color: #9ca3af;
+    }
+
+    .transaction-amount {
+      font-weight: 700;
+      color: #10b981;
+    }
+
+    /* PROFILE TAB */
+    .profile-box {
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .profile-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #d47a65;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin: 0 auto 10px;
+    }
+
+    .profile-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #3e2d53;
+      margin-bottom: 4px;
+    }
+
+    .profile-id {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-bottom: 12px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .stat-box {
+      background: #f3f4f6;
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 16px;
+      font-weight: 800;
+      color: #d47a65;
+    }
+
+    .logout-btn {
+      background: #ef4444;
+      color: #ffffff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 18px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 2px 4px rgba(239,68,68,0.3);
+    }
+
+    .logout-btn:hover { background: #dc2626; }
+
+    /* HISTORY TAB */
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .history-item {
+      background: #ffffff;
+      padding: 12px;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .history-game-title {
+      font-weight: 700;
+      color: #3e2d53;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .history-time {
+      font-size: 10px;
+      color: #9ca3af;
+      margin-bottom: 6px;
+    }
+
+    .history-result {
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .history-result.win {
+      color: #10b981;
+    }
+
+    .history-result.lose {
+      color: #ef4444;
+    }
+
+    .empty-message {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    /* START BUTTON */
+    .start-button {
+      background: #d47a65;
+      color: #ffffff;
+      border: none;
+      padding: 14px 0;
+      border-radius: 24px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 3px 6px rgba(212,122,101,0.3);
+      margin-bottom: 10px;
+    }
+
+    .start-button:hover { background: #c76550; }
+    .start-button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .selected-ticket {
+      background: #ffffff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 12px;
+      color: #3e2d53;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    /* GAME SCREEN */
+    .screen {
       display: none;
       flex-direction: column;
       width: 100%;
       max-width: 440px;
       padding: 12px;
+      align-items: center;
+    }
+
+    .screen.active {
+      display: flex;
     }
 
     .caller-panel {
       background: #ffffff;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 14px;
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 12px;
       text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      width: 100%;
     }
 
     #callEn {
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 800;
       color: #d47a65;
       display: block;
     }
 
     .caller-amharic {
-      font-size: 18px;
+      font-size: 16px;
       color: #7b5997;
+      display: block;
+      margin-top: 6px;
+    }
+
+    .game-timer {
+      font-size: 12px;
+      font-weight: 700;
+      color: #d47a65;
       display: block;
       margin-top: 8px;
     }
 
-    .game-timer {
-      font-size: 14px;
-      font-weight: 700;
-      color: #d47a65;
-      display: block;
-      margin-top: 12px;
+    .volume-indicator {
+      font-size: 18px;
+      margin-top: 6px;
     }
 
     .b-header-row {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 5px;
-      margin-bottom: 8px;
+      gap: 4px;
+      margin-bottom: 6px;
+      width: 100%;
     }
 
     .b-head-col {
       background: #d47a65;
       color: #ffffff;
-      font-size: 18px;
+      font-size: 14px;
       font-weight: 800;
-      padding: 10px;
-      border-radius: 7px;
+      padding: 8px;
+      border-radius: 6px;
       text-align: center;
     }
 
     .ticket-matrix {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 5px;
-      margin-bottom: 14px;
+      gap: 4px;
+      margin-bottom: 12px;
+      width: 100%;
     }
 
     .t-cell {
       background: #dbd2e8;
       color: #3e2d53;
       aspect-ratio: 1;
-      border-radius: 7px;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 800;
       cursor: pointer;
       user-select: none;
       box-shadow: 0 1px 2px rgba(0,0,0,0.06);
-      transition: background-color 0.2s ease;
+      transition: all 0.2s;
     }
 
     .t-cell:active { transform: scale(0.95); }
@@ -257,176 +464,164 @@
     .t-cell.marked {
       background: #f97316 !important;
       color: #ffffff !important;
-      box-shadow: 0 2px 6px rgba(249,115,22,0.4);
+      box-shadow: 0 2px 4px rgba(249,115,22,0.4);
     }
 
     .t-cell.free {
       background: #fbbf24 !important;
       color: #3e2d53 !important;
-      font-size: 12px;
+      font-size: 10px;
     }
 
     .btn-claim {
       background: #10b981;
       color: #ffffff;
       border: none;
-      padding: 14px 0;
-      border-radius: 24px;
-      font-size: 16px;
+      padding: 12px 0;
+      border-radius: 20px;
+      font-size: 14px;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 3px 6px rgba(16,185,129,0.3);
+      width: 100%;
+      box-shadow: 0 2px 4px rgba(16,185,129,0.3);
     }
 
-    .btn-claim:hover {
-      background: #059669;
-    }
-
+    .btn-claim:hover { background: #059669; }
     .btn-claim:disabled {
       background: #9ca3af;
       cursor: not-allowed;
-      box-shadow: none;
     }
 
-    .bottom-navbar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      max-width: 440px;
-      height: 60px;
+    .game-over-panel {
       background: #ffffff;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
-    }
-
-    .nav-tab {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      color: #9ca3af;
-      font-size: 12px;
-      cursor: pointer;
-    }
-
-    .nav-tab.active {
-      color: #d47a65;
-    }
-
-    .nav-tab i {
-      font-size: 20px;
-    }
-
-    .game-over-screen {
-      display: none;
-      flex-direction: column;
-      width: 100%;
-      max-width: 440px;
-      padding: 20px;
-      align-items: center;
-      text-align: center;
-    }
-
-    .game-over-message {
-      background: #ffffff;
-      padding: 40px 20px;
+      padding: 30px 20px;
       border-radius: 12px;
+      text-align: center;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
+      width: 100%;
     }
 
-    .game-over-message h1 {
-      font-size: 36px;
-      color: #10b981;
+    .game-over-panel h1 {
+      font-size: 32px;
       margin-bottom: 10px;
     }
 
-    .game-over-message p {
-      font-size: 18px;
+    .game-over-panel p {
+      font-size: 14px;
       color: #3e2d53;
+      margin-bottom: 20px;
     }
 
     .btn-play-again {
       background: #d47a65;
       color: #ffffff;
       border: none;
-      padding: 12px 30px;
-      border-radius: 24px;
-      font-size: 15px;
+      padding: 10px 24px;
+      border-radius: 20px;
+      font-size: 13px;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 3px 6px rgba(212,122,101,0.3);
+      box-shadow: 0 2px 4px rgba(212,122,101,0.3);
     }
 
-    .btn-play-again:hover {
-      background: #c76550;
-    }
-
-    .game-timeout-screen {
-      display: none;
-      flex-direction: column;
-      width: 100%;
-      max-width: 440px;
-      padding: 20px;
-      align-items: center;
-      text-align: center;
-    }
-
-    .timeout-message {
-      background: #ffffff;
-      padding: 40px 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-    }
-
-    .timeout-message h1 {
-      font-size: 36px;
-      color: #ef4444;
-      margin-bottom: 10px;
-    }
-
-    .timeout-message p {
-      font-size: 18px;
-      color: #3e2d53;
-    }
+    .btn-play-again:hover { background: #c76550; }
   </style>
 </head>
 <body>
-  <div id="bannerAlert" class="alert-banner">
-    <span class="alert-icon">⚠️</span>
-    <div class="alert-text">
-      Please top up your wallet. If you already have and are still seeing this, please refresh the page
-    </div>
-    <span class="alert-close" onclick="document.getElementById('bannerAlert').style.display='none'">×</span>
-  </div>
-
-  <div class="lobby-content" id="lobbyView">
-    <div class="grid-100" id="mainGrid"></div>
-
-    <div class="button-group">
-      <button class="btn-refresh" onclick="resetBoard()">Refresh</button>
-      <button class="btn-start" id="startBtn" onclick="forceStartGame()">Start Game</button>
-    </div>
-
-    <div class="fairness-card">
-      <i class="fa-regular fa-copy copy-icon" onclick="copyHash()"></i>
-      <div class="fairness-header">GAME HASH (FAIRNESS)</div>
-      <div class="fairness-id">ID: DB1158</div>
-      <div class="hash-container" id="gameHashText">
-        09c97bd225db7f5ce279519c8db39c3f73af2ada7f8717c660c549a34e68b755
+  <!-- LOBBY SCREEN -->
+  <div class="screen active" id="lobbyScreen">
+    <!-- Player Info Bar -->
+    <div class="player-info-bar">
+      <div>
+        <div class="player-name" id="playerName">Player</div>
+        <div class="player-id" id="playerId">ID: #0000</div>
       </div>
+      <div class="player-wallet" id="playerBalance">💰 0 ETB</div>
+    </div>
+
+    <div class="lobby-container">
+      <!-- Grid 100 -->
+      <div class="grid-100" id="mainGrid"></div>
+
+      <!-- Selected Ticket Info -->
+      <div class="selected-ticket" id="selectedInfo" style="display: none;">
+        Your Ticket: <span id="selectedNumber" style="color: #f97316;">--</span>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('wallet')">💰 Wallet</button>
+        <button class="tab-btn" onclick="switchTab('profile')">👤 Profile</button>
+        <button class="tab-btn" onclick="switchTab('history')">📖 History</button>
+      </div>
+
+      <!-- Wallet Tab -->
+      <div class="tab-content active" id="walletTab">
+        <div class="wallet-box">
+          <div class="wallet-label">Available Balance</div>
+          <div class="wallet-amount" id="walletAmount">0.00 ETB</div>
+          <button class="add-funds-btn" onclick="addFunds()">+ Add Funds</button>
+          
+          <div class="transactions-title">Recent Transactions</div>
+          <div id="transactionsList"></div>
+        </div>
+      </div>
+
+      <!-- Profile Tab -->
+      <div class="tab-content" id="profileTab">
+        <div class="profile-box">
+          <div class="profile-avatar">👤</div>
+          <div class="profile-name" id="profileName">Player</div>
+          <div class="profile-id" id="profileIdText">ID: #0000</div>
+          
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-label">Total Games</div>
+              <div class="stat-value" id="totalGames">0</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Wins</div>
+              <div class="stat-value" id="totalWins">0</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Win Rate</div>
+              <div class="stat-value" id="winRate">0%</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Earnings</div>
+              <div class="stat-value" id="totalEarnings">0 ETB</div>
+            </div>
+          </div>
+          
+          <button class="logout-btn" onclick="logoutProfile()">Logout</button>
+        </div>
+      </div>
+
+      <!-- History Tab -->
+      <div class="tab-content" id="historyTab">
+        <div id="historyList"></div>
+      </div>
+
+      <!-- Start Button -->
+      <button class="start-button" id="startBtn" onclick="startGame()" disabled>Start Game</button>
     </div>
   </div>
 
-  <div id="bingoScreen">
+  <!-- GAME SCREEN -->
+  <div class="screen" id="gameScreen">
+    <div class="player-info-bar" style="margin-bottom: 8px;">
+      <div>
+        <div class="player-name" id="gamePlayerName">Player</div>
+        <div class="player-id" id="gameTicket">Ticket: #--</div>
+      </div>
+      <div class="player-wallet" id="gamePlayerBalance">💰 0 ETB</div>
+    </div>
+
     <div class="caller-panel">
       <span id="callEn">CALLING SOON...</span>
       <span class="caller-amharic" id="callAm">ቁጥሮች በቅርቡ ይጠራሉ...</span>
       <span class="game-timer" id="gameTimer">Time: 3:00</span>
+      <div class="volume-indicator" id="volumeIcon">🔊</div>
     </div>
 
     <div class="b-header-row">
@@ -441,42 +636,22 @@
     <button class="btn-claim" id="bingoBtn" onclick="claimBingo()">🎉 BINGO!</button>
   </div>
 
-  <div class="game-over-screen" id="gameOverScreen">
-    <div class="game-over-message">
+  <!-- GAME OVER SCREEN -->
+  <div class="screen" id="gameOverScreen">
+    <div class="game-over-panel">
       <h1 id="gameOverTitle">🎉 YOU WON! 🎉</h1>
       <p id="gameOverText">እንኳን ደስ አለዎት አሸንፈዋል!</p>
+      <p style="font-size: 16px; color: #10b981; font-weight: 700; margin-bottom: 20px;">+50 ETB 🎁</p>
+      <button class="btn-play-again" onclick="playAgain()">Play Again</button>
     </div>
-    <button class="btn-play-again" onclick="playAgain()">Play Again</button>
   </div>
 
-  <div class="game-timeout-screen" id="gameTimeoutScreen">
-    <div class="timeout-message">
+  <!-- TIMEOUT SCREEN -->
+  <div class="screen" id="timeoutScreen">
+    <div class="game-over-panel">
       <h1>⏰ TIME'S UP!</h1>
       <p>ጊዜ ያለቀ! No winner this round</p>
-    </div>
-    <button class="btn-play-again" onclick="playAgain()">Play Again</button>
-  </div>
-
-  <div class="bottom-navbar">
-    <div class="nav-tab active">
-      <i class="fa-solid fa-gamepad"></i>
-      <span>Game</span>
-    </div>
-    <div class="nav-tab">
-      <i class="fa-solid fa-trophy"></i>
-      <span>Scores</span>
-    </div>
-    <div class="nav-tab">
-      <i class="fa-solid fa-clock-rotate-left"></i>
-      <span>History</span>
-    </div>
-    <div class="nav-tab">
-      <i class="fa-solid fa-wallet"></i>
-      <span>Wallet</span>
-    </div>
-    <div class="nav-tab">
-      <i class="fa-solid fa-user"></i>
-      <span>Profile</span>
+      <button class="btn-play-again" onclick="playAgain()">Play Again</button>
     </div>
   </div>
 
@@ -484,69 +659,148 @@
     const tg = window.Telegram?.WebApp;
     if (tg) tg.expand();
 
-    let selectedCard = 74;
-    let countdown = 15;
-    let timerRunning = true;
+    // Player Data
+    let playerData = {
+      id: Math.floor(Math.random() * 999999),
+      name: 'Habesha Player',
+      wallet: 100,
+      totalGames: 0,
+      totalWins: 0,
+      gameHistory: [],
+      transactions: []
+    };
+
+    // Game Variables
+    let selectedCard = null;
+    let gameActive = false;
+    let callInterval = null;
+    let gameTimeoutTimer = null;
     let calledNumbers = new Set();
     let markedCells = new Set(["2,2"]);
-    let gameActive = true;
-    let callInterval = null;
-    let gameStartTime = null;
-    let gameTimeoutInterval = null;
-    let gameTimeoutTimer = null;
 
-    const mainGrid = document.getElementById('mainGrid');
-    if (mainGrid) {
-      for (let i = 1; i <= 100; i++) {
-        const tile = document.createElement('div');
-        tile.className = 'tile-100' + (i === 74 ? ' selected' : '');
-        tile.innerText = i;
-        tile.onclick = function() {
-          document.querySelectorAll('.tile-100').forEach(t => t.classList.remove('selected'));
-          tile.classList.add('selected');
-          selectedCard = i;
-        };
-        mainGrid.appendChild(tile);
-      }
-    }
-
-    const lobbyTimer = setInterval(function() {
-      if (!timerRunning) return;
-      countdown--;
-      const startBtn = document.getElementById('startBtn');
-      if (startBtn) {
-        startBtn.innerText = `Start (${countdown}s)`;
-      }
-      if (countdown <= 0) {
-        clearInterval(lobbyTimer);
-        launchActiveGame();
-      }
-    }, 1000);
-
-    function forceStartGame() {
-      timerRunning = false;
-      launchActiveGame();
-    }
-
-    function resetBoard() {
-      selectedCard = null;
-      document.querySelectorAll('.tile-100').forEach(t => t.classList.remove('selected'));
-      countdown = 15;
-      timerRunning = true;
-    }
-
-    function copyHash() {
-      const text = document.getElementById('gameHashText').innerText.trim();
-      navigator.clipboard.writeText(text).then(() => {
-        alert('Hash copied to clipboard!');
-      }).catch(() => {
-        alert('Failed to copy hash');
-      });
-    }
-
+    // Amharic Numbers
     const amUnits = ["", "አንድ", "ሁለት", "ሦስት", "አራት", "አምስት", "ስድስት", "ሰባት", "ስምንት", "ዘጠኝ"];
     const amTens = ["", "አስር", "ሃያ", "ሰላሳ", "አርባ", "ሃምሳ", "ስድሳ", "ሰባ", "ስማንያ", "ዘጠና"];
     const amTeens = ["አስር", "አስራ አንድ", "አስራ ሁለት", "አስራ ሦስት", "አስራ አራት", "አስራ አምስት", "አስራ ስድስት", "አስራ ሰባት", "አስራ ስምንት", "አስራ ዘጠኝ"];
+
+    // Load Player Data
+    function loadPlayerData() {
+      const saved = localStorage.getItem('bingoPlayerData');
+      if (saved) {
+        playerData = JSON.parse(saved);
+      }
+      updateUI();
+    }
+
+    // Save Player Data
+    function savePlayerData() {
+      localStorage.setItem('bingoPlayerData', JSON.stringify(playerData));
+    }
+
+    // Update UI
+    function updateUI() {
+      document.getElementById('playerName').innerText = playerData.name;
+      document.getElementById('playerId').innerText = `ID: #${playerData.id}`;
+      document.getElementById('playerBalance').innerText = `💰 ${playerData.wallet.toFixed(2)} ETB`;
+      
+      document.getElementById('walletAmount').innerText = `${playerData.wallet.toFixed(2)} ETB`;
+      document.getElementById('profileName').innerText = playerData.name;
+      document.getElementById('profileIdText').innerText = `ID: #${playerData.id}`;
+      document.getElementById('totalGames').innerText = playerData.totalGames;
+      document.getElementById('totalWins').innerText = playerData.totalWins;
+      
+      const winRate = playerData.totalGames > 0 ? Math.round((playerData.totalWins / playerData.totalGames) * 100) : 0;
+      document.getElementById('winRate').innerText = winRate + '%';
+      document.getElementById('totalEarnings').innerText = (playerData.totalWins * 50) + ' ETB';
+      
+      updateTransactions();
+      updateHistory();
+    }
+
+    function updateTransactions() {
+      const list = document.getElementById('transactionsList');
+      if (playerData.transactions.length === 0) {
+        list.innerHTML = '<div class="empty-message">No transactions yet</div>';
+      } else {
+        list.innerHTML = playerData.transactions.slice(-5).reverse().map(tx => `
+          <div class="transaction-item">
+            <div class="transaction-info">
+              <div class="transaction-type">${tx.type === 'win' ? '🎁 Prize' : '➕ Top Up'}</div>
+              <div class="transaction-time">${new Date(tx.date).toLocaleString()}</div>
+            </div>
+            <div class="transaction-amount">+${tx.amount} ETB</div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function updateHistory() {
+      const list = document.getElementById('historyList');
+      if (playerData.gameHistory.length === 0) {
+        list.innerHTML = '<div class="empty-message">No games played yet</div>';
+      } else {
+        list.innerHTML = playerData.gameHistory.slice().reverse().map((game, idx) => `
+          <div class="history-item">
+            <div class="history-game-title">Game ${playerData.gameHistory.length - idx}</div>
+            <div class="history-time">${new Date(game.date).toLocaleString()}</div>
+            <div class="history-result ${game.won ? 'win' : 'lose'}">
+              ${game.won ? '✅ WON - +50 ETB' : '❌ LOST'}
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      
+      event.target.classList.add('active');
+      document.getElementById(tab + 'Tab').classList.add('active');
+    }
+
+    function addFunds() {
+      const amount = prompt('Enter amount to add (ETB):', '50');
+      if (amount) {
+        const addAmount = parseFloat(amount);
+        if (!isNaN(addAmount) && addAmount > 0) {
+          playerData.wallet += addAmount;
+          playerData.transactions.push({
+            type: 'topup',
+            amount: addAmount,
+            date: new Date().toISOString()
+          });
+          savePlayerData();
+          updateUI();
+          alert(`✅ Added ${addAmount} ETB`);
+        }
+      }
+    }
+
+    function logoutProfile() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('bingoPlayerData');
+        location.reload();
+      }
+    }
+
+    // Build Grid
+    const mainGrid = document.getElementById('mainGrid');
+    for (let i = 1; i <= 100; i++) {
+      const tile = document.createElement('div');
+      tile.className = 'tile-100';
+      tile.innerText = i;
+      tile.onclick = function() {
+        if (gameActive) return;
+        document.querySelectorAll('.tile-100').forEach(t => t.classList.remove('selected'));
+        tile.classList.add('selected');
+        selectedCard = i;
+        document.getElementById('selectedInfo').style.display = 'block';
+        document.getElementById('selectedNumber').innerText = i;
+        document.getElementById('startBtn').disabled = false;
+      };
+      mainGrid.appendChild(tile);
+    }
 
     function getAmharicNumber(num) {
       if (num < 10) return amUnits[num];
@@ -566,23 +820,20 @@
         if ('speechSynthesis' in window) {
           window.speechSynthesis.cancel();
           const msg = new SpeechSynthesisUtterance(text);
-          msg.rate = 0.8;
+          msg.rate = 0.9;
           msg.pitch = 1.0;
           msg.volume = 1.0;
-          msg.lang = 'am-ET';
+          msg.lang = 'am';
           
-          msg.onstart = function() {
-            console.log('Speaking:', text);
-          };
-          
-          msg.onerror = function(event) {
-            console.log('Speech error:', event.error);
-          };
+          const volumeIcon = document.getElementById('volumeIcon');
+          msg.onstart = () => { if (volumeIcon) volumeIcon.innerText = '🔊 ▶️'; };
+          msg.onend = () => { if (volumeIcon) volumeIcon.innerText = '🔊'; };
+          msg.onerror = () => { if (volumeIcon) volumeIcon.innerText = '🔇'; };
           
           window.speechSynthesis.speak(msg);
         }
       } catch (e) {
-        console.log('Speech synthesis error:', e);
+        console.error('Speech error:', e);
       }
     }
 
@@ -621,28 +872,32 @@
       return matrix;
     }
 
-    function launchActiveGame() {
+    function startGame() {
+      if (!selectedCard) {
+        alert('Please select a ticket number (1-100)');
+        return;
+      }
+
+      if (playerData.wallet < 10) {
+        alert('❌ Insufficient balance. Need at least 10 ETB to play');
+        return;
+      }
+
       gameActive = true;
-      gameStartTime = Date.now();
       calledNumbers = new Set();
       markedCells = new Set(["2,2"]);
+      playerData.wallet -= 10;
+      savePlayerData();
 
-      const lobbyView = document.getElementById('lobbyView');
-      const bingoScreen = document.getElementById('bingoScreen');
-      const gameOverScreen = document.getElementById('gameOverScreen');
-      const gameTimeoutScreen = document.getElementById('gameTimeoutScreen');
-      const bannerAlert = document.getElementById('bannerAlert');
+      document.getElementById('lobbyScreen').classList.remove('active');
+      document.getElementById('gameScreen').classList.add('active');
 
-      if (lobbyView) lobbyView.style.display = 'none';
-      if (bannerAlert) bannerAlert.style.display = 'none';
-      if (bingoScreen) bingoScreen.style.display = 'flex';
-      if (gameOverScreen) gameOverScreen.style.display = 'none';
-      if (gameTimeoutScreen) gameTimeoutScreen.style.display = 'none';
+      document.getElementById('gamePlayerName').innerText = playerData.name;
+      document.getElementById('gameTicket').innerText = `Ticket: #${selectedCard}`;
+      document.getElementById('gamePlayerBalance').innerText = `💰 ${playerData.wallet.toFixed(2)} ETB`;
 
-      const ticket = generateTicket(selectedCard || 74);
+      const ticket = generateTicket(selectedCard);
       const ticketGrid = document.getElementById('ticketGrid');
-      if (!ticketGrid) return;
-
       ticketGrid.innerHTML = '';
 
       for (let r = 0; r < 5; r++) {
@@ -708,7 +963,6 @@
         drawIdx++;
       }, 5000);
 
-      // Game timeout timer (3 minutes = 180 seconds)
       let secondsRemaining = 180;
       const gameTimer = document.getElementById('gameTimer');
       if (gameTimer) gameTimer.innerText = `Time: ${formatGameTime(secondsRemaining)}`;
@@ -746,27 +1000,29 @@
 
       if (won) {
         gameActive = false;
-        
-        if (callInterval) {
-          clearInterval(callInterval);
-          callInterval = null;
-        }
-        
-        if (gameTimeoutTimer) {
-          clearInterval(gameTimeoutTimer);
-          gameTimeoutTimer = null;
-        }
+        if (callInterval) clearInterval(callInterval);
+        if (gameTimeoutTimer) clearInterval(gameTimeoutTimer);
         
         window.speechSynthesis.cancel();
-        
         speakAmharic('ቢንጎ! አሸንፈዋል!');
         
+        playerData.totalGames++;
+        playerData.totalWins++;
+        playerData.wallet += 50;
+        playerData.gameHistory.push({
+          won: true,
+          date: new Date().toISOString()
+        });
+        playerData.transactions.push({
+          type: 'win',
+          amount: 50,
+          date: new Date().toISOString()
+        });
+        savePlayerData();
+        
         setTimeout(() => {
-          const bingoScreen = document.getElementById('bingoScreen');
-          const gameOverScreen = document.getElementById('gameOverScreen');
-          
-          if (bingoScreen) bingoScreen.style.display = 'none';
-          if (gameOverScreen) gameOverScreen.style.display = 'flex';
+          document.getElementById('gameScreen').classList.remove('active');
+          document.getElementById('gameOverScreen').classList.add('active');
         }, 500);
       } else {
         alert('❌ ቢንጎ አልሞላም! ቁጥሮችን በትክክል ይምረጡ።');
@@ -775,46 +1031,44 @@
 
     function endGameTimeout() {
       gameActive = false;
-      
-      if (callInterval) {
-        clearInterval(callInterval);
-        callInterval = null;
-      }
-      
+      if (callInterval) clearInterval(callInterval);
       window.speechSynthesis.cancel();
       
-      const bingoScreen = document.getElementById('bingoScreen');
-      const gameTimeoutScreen = document.getElementById('gameTimeoutScreen');
+      playerData.totalGames++;
+      playerData.gameHistory.push({
+        won: false,
+        date: new Date().toISOString()
+      });
+      savePlayerData();
       
-      if (bingoScreen) bingoScreen.style.display = 'none';
-      if (gameTimeoutScreen) gameTimeoutScreen.style.display = 'flex';
+      document.getElementById('gameScreen').classList.remove('active');
+      document.getElementById('timeoutScreen').classList.add('active');
     }
 
     function playAgain() {
-      gameActive = true;
+      gameActive = false;
+      selectedCard = null;
       calledNumbers = new Set();
       markedCells = new Set(["2,2"]);
+      
       if (callInterval) clearInterval(callInterval);
       if (gameTimeoutTimer) clearInterval(gameTimeoutTimer);
       
       window.speechSynthesis.cancel();
       
-      const lobbyView = document.getElementById('lobbyView');
-      const gameOverScreen = document.getElementById('gameOverScreen');
-      const gameTimeoutScreen = document.getElementById('gameTimeoutScreen');
-      const bannerAlert = document.getElementById('bannerAlert');
+      document.querySelectorAll('.tile-100').forEach(t => t.classList.remove('selected'));
+      document.getElementById('selectedInfo').style.display = 'none';
+      document.getElementById('startBtn').disabled = true;
       
-      if (lobbyView) lobbyView.style.display = 'flex';
-      if (gameOverScreen) gameOverScreen.style.display = 'none';
-      if (gameTimeoutScreen) gameTimeoutScreen.style.display = 'none';
-      if (bannerAlert) bannerAlert.style.display = 'flex';
+      updateUI();
       
-      countdown = 15;
-      timerRunning = true;
-      
-      const startBtn = document.getElementById('startBtn');
-      if (startBtn) startBtn.innerText = `Start (${countdown}s)`;
+      document.getElementById('gameScreen').classList.remove('active');
+      document.getElementById('gameOverScreen').classList.remove('active');
+      document.getElementById('timeoutScreen').classList.remove('active');
+      document.getElementById('lobbyScreen').classList.add('active');
     }
+
+    loadPlayerData();
   </script>
 </body>
 </html>
