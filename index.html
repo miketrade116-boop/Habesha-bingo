@@ -1,4 +1,3 @@
-Mikë, [8/31/2026 12:37 PM]
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -126,6 +125,9 @@ Mikë, [8/31/2026 12:37 PM]
       cursor: pointer;
       box-shadow: 0 3px 6px rgba(59,130,246,0.3);
     }
+    .btn-refresh:hover {
+      background: #2563eb;
+    }
     .btn-start {
       flex: 1;
       background: #d47a65;
@@ -137,6 +139,9 @@ Mikë, [8/31/2026 12:37 PM]
       font-weight: 700;
       cursor: pointer;
       box-shadow: 0 3px 6px rgba(212,122,101,0.3);
+    }
+    .btn-start:hover {
+      background: #c76550;
     }
 
     /* Game Hash Box */
@@ -154,8 +159,156 @@ Mikë, [8/31/2026 12:37 PM]
       font-size: 11px;
       font-weight: 800;
       color: #2b2b2b;
-Mikë, [8/31/2026 12:37 PM]
-<div class="alert-text">
+      margin-bottom: 4px;
+    }
+    .fairness-id {
+      font-size: 10px;
+      color: #6b7280;
+      margin-bottom: 6px;
+    }
+    .hash-container {
+      font-size: 12px;
+      font-family: monospace;
+      color: #3e2d53;
+      word-break: break-all;
+      line-height: 1.4;
+    }
+    .copy-icon {
+      cursor: pointer;
+      color: #7b5997;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    /* Bingo Screen */
+    #bingoScreen {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      max-width: 440px;
+      padding: 12px;
+    }
+
+    .caller-panel {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 14px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    #callEn {
+      font-size: 32px;
+      font-weight: 800;
+      color: #d47a65;
+      display: block;
+    }
+    .caller-amharic {
+      font-size: 18px;
+      color: #7b5997;
+      display: block;
+      margin-top: 8px;
+    }
+
+    .b-header-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+      margin-bottom: 8px;
+    }
+    .b-head-col {
+      background: #d47a65;
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 800;
+      padding: 10px;
+      border-radius: 7px;
+      text-align: center;
+    }
+
+    .ticket-matrix {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+      margin-bottom: 14px;
+    }
+    .t-cell {
+      background: #dbd2e8;
+      color: #3e2d53;
+      aspect-ratio: 1;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+      transition: background-color 0.2s ease;
+    }
+    .t-cell:active { transform: scale(0.95); }
+    .t-cell.marked {
+      background: #f97316 !important;
+      color: #ffffff !important;
+      box-shadow: 0 2px 6px rgba(249,115,22,0.4);
+    }
+    .t-cell.free {
+      background: #fbbf24 !important;
+      color: #3e2d53 !important;
+      font-size: 12px;
+    }
+
+    .btn-claim {
+      background: #10b981;
+      color: #ffffff;
+      border: none;
+      padding: 14px 0;
+      border-radius: 24px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(16,185,129,0.3);
+    }
+    .btn-claim:hover {
+      background: #059669;
+    }
+
+    /* Bottom Navigation */
+    .bottom-navbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      max-width: 440px;
+      height: 60px;
+      background: #ffffff;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+    }
+    .nav-tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: #9ca3af;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .nav-tab.active {
+      color: #d47a65;
+    }
+    .nav-tab i {
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="bannerAlert" class="alert-banner">
+    <span class="alert-icon">⚠️</span>
+    <div class="alert-text">
       Please top up your wallet. If you already have and are still seeing this, please refresh the page
     </div>
     <span class="alert-close" onclick="document.getElementById('bannerAlert').style.display='none'">×</span>
@@ -227,31 +380,36 @@ Mikë, [8/31/2026 12:37 PM]
     const tg = window.Telegram?.WebApp;
     if (tg) tg.expand();
 
-    let selectedCard = 74; // Highlighted default matching image
+    let selectedCard = 74;
     let countdown = 15;
     let timerRunning = true;
     let calledNumbers = new Set();
-    let markedCells = new Set(["2,2"]); // FREE tile marked
+    let markedCells = new Set(["2,2"]);
 
     // Build 1-100 Grid
     const mainGrid = document.getElementById('mainGrid');
-    for (let i = 1; i <= 100; i++) {
-      const tile = document.createElement('div');
-      tile.className = 'tile-100' + (i === 74 ? ' selected' : '');
-      tile.innerText = i;
-      tile.onclick = function() {
-        document.querySelectorAll('.tile-100').forEach(t => t.classList.remove('selected'));
-        tile.classList.add('selected');
-        selectedCard = i;
-      };
-      mainGrid.appendChild(tile);
+    if (mainGrid) {
+      for (let i = 1; i <= 100; i++) {
+        const tile = document.createElement('div');
+        tile.className = 'tile-100' + (i === 74 ? ' selected' : '');
+        tile.innerText = i;
+        tile.onclick = function() {
+          document.querySelectorAll('.tile-100').forEach(t => t.classList.remove('selected'));
+          tile.classList.add('selected');
+          selectedCard = i;
+        };
+        mainGrid.appendChild(tile);
+      }
     }
 
     // Auto Countdown Timer
     const lobbyTimer = setInterval(function() {
       if (!timerRunning) return;
       countdown--;
-      document.getElementById('startBtn').innerText = Start (${countdown}s);
+      const startBtn = document.getElementById('startBtn');
+      if (startBtn) {
+        startBtn.innerText = `Start (${countdown}s)`;
+      }
       if (countdown <= 0) {
         clearInterval(lobbyTimer);
         launchActiveGame();
@@ -266,26 +424,30 @@ Mikë, [8/31/2026 12:37 PM]
     function resetBoard() {
       selectedCard = null;
       document.querySelectorAll('.tile-100').forEach(t => t.classList.remove('selected'));
+      countdown = 15;
+      timerRunning = true;
     }
 
     function copyHash() {
       const text = document.getElementById('gameHashText').innerText.trim();
-      navigator.clipboard.writeText(text);
-      alert('Hash copied to clipboard!');
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Hash copied to clipboard!');
+      }).catch(() => {
+        alert('Failed to copy hash');
+      });
     }
 
     // Amharic Translation Map
     const amUnits = ["", "አንድ", "ሁለት", "ሦስት", "አራት", "አምስት", "ስድስት", "ሰባት", "ስምንት", "ዘጠኝ"];
-    const amTens = ["", "አስር", "ሃያ", "ሰላሳ", "አርባ", "ሃምሳ", "ስድሳ", "ሰባ"];
+    const amTens = ["", "አስር", "ሃያ", "ሰላሳ", "አርባ", "ሃምሳ", "ስድሳ", "ሰባ", "ስማንያ", "ዘጠና"];
     const amTeens = ["አስር", "አስራ አንድ", "አስራ ሁለት", "አስራ ሦስት", "አስራ አራት", "አስራ አምስት", "አስራ ስድስት", "አስራ ሰባት", "አስራ ስምንት", "አስራ ዘጠኝ"];
 
-Mikë, [8/31/2026 12:37 PM]
-function getAmharicNumber(num) {
+    function getAmharicNumber(num) {
       if (num < 10) return amUnits[num];
       if (num >= 10 && num < 20) return amTeens[num - 10];
       const ten = Math.floor(num / 10);
       const unit = num % 10;
-      return unit === 0 ? amTens[ten] : ${amTens[ten]} ${amUnits[unit]};
+      return unit === 0 ? amTens[ten] : `${amTens[ten]} ${amUnits[unit]}`;
     }
 
     function getAmharicLetter(letter) {
@@ -335,12 +497,18 @@ function getAmharicNumber(num) {
     }
 
     function launchActiveGame() {
-      document.getElementById('lobbyView').style.display = 'none';
-      document.getElementById('bannerAlert').style.display = 'none';
-      document.getElementById('bingoScreen').style.display = 'flex';
+      const lobbyView = document.getElementById('lobbyView');
+      const bingoScreen = document.getElementById('bingoScreen');
+      const bannerAlert = document.getElementById('bannerAlert');
+      
+      if (lobbyView) lobbyView.style.display = 'none';
+      if (bannerAlert) bannerAlert.style.display = 'none';
+      if (bingoScreen) bingoScreen.style.display = 'flex';
 
       const ticket = generateTicket(selectedCard || 74);
       const ticketGrid = document.getElementById('ticketGrid');
+      if (!ticketGrid) return;
+      
       ticketGrid.innerHTML = '';
 
       for (let r = 0; r < 5; r++) {
@@ -357,10 +525,10 @@ function getAmharicNumber(num) {
             cell.onclick = function() {
               if (calledNumbers.has(val)) {
                 cell.classList.add('marked');
-                markedCells.add(${r},${c});
+                markedCells.add(`${r},${c}`);
                 if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
               } else {
-                alert(ቁጥር ${val} ገና አልተጠራም!);
+                alert(`ቁጥር ${val} ገና አልተጠራም!`);
               }
             };
           }
@@ -392,25 +560,29 @@ function getAmharicNumber(num) {
         const amL = getAmharicLetter(letter);
         const amN = getAmharicNumber(num);
 
-        document.getElementById('callEn').innerText = ${letter} ${num};
-        document.getElementById('callAm').innerText = ${amL} - ${amN};
-        speakAmharic(${amL} ${amN});
+        const callEn = document.getElementById('callEn');
+        const callAm = document.getElementById('callAm');
+        if (callEn) callEn.innerText = `${letter} ${num}`;
+        if (callAm) callAm.innerText = `${amL} - ${amN}`;
+        speakAmharic(`${amL} ${amN}`);
 
         drawIdx++;
       }, 3500);
     }
 
-Mikë, [8/31/2026 12:37 PM]
-function claimBingo() {
+    function claimBingo() {
       let won = false;
+      // Check rows
       for (let r = 0; r < 5; r++) {
-        if ([0,1,2,3,4].every(c => markedCells.has(${r},${c}))) won = true;
+        if ([0,1,2,3,4].every(c => markedCells.has(`${r},${c}`))) won = true;
       }
+      // Check columns
       for (let c = 0; c < 5; c++) {
-        if ([0,1,2,3,4].every(r => markedCells.has(${r},${c}))) won = true;
+        if ([0,1,2,3,4].every(r => markedCells.has(`${r},${c}`))) won = true;
       }
-      if ([0,1,2,3,4].every(i => markedCells.has(${i},${i}))) won = true;
-      if ([0,1,2,3,4].every(i => markedCells.has(${i},${4-i}))) won = true;
+      // Check diagonals
+      if ([0,1,2,3,4].every(i => markedCells.has(`${i},${i}`))) won = true;
+      if ([0,1,2,3,4].every(i => markedCells.has(`${i},${4-i}`))) won = true;
 
       if (won) {
         speakAmharic('ቢንጎ! አሸንፈዋል!');
