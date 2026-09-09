@@ -204,6 +204,14 @@
       margin-top: 8px;
     }
 
+    .game-timer {
+      font-size: 14px;
+      font-weight: 700;
+      color: #d47a65;
+      display: block;
+      margin-top: 12px;
+    }
+
     .b-header-row {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -356,6 +364,35 @@
     .btn-play-again:hover {
       background: #c76550;
     }
+
+    .game-timeout-screen {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      max-width: 440px;
+      padding: 20px;
+      align-items: center;
+      text-align: center;
+    }
+
+    .timeout-message {
+      background: #ffffff;
+      padding: 40px 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .timeout-message h1 {
+      font-size: 36px;
+      color: #ef4444;
+      margin-bottom: 10px;
+    }
+
+    .timeout-message p {
+      font-size: 18px;
+      color: #3e2d53;
+    }
   </style>
 </head>
 <body>
@@ -389,6 +426,7 @@
     <div class="caller-panel">
       <span id="callEn">CALLING SOON...</span>
       <span class="caller-amharic" id="callAm">ቁጥሮች በቅርቡ ይጠራሉ...</span>
+      <span class="game-timer" id="gameTimer">Time: 3:00</span>
     </div>
 
     <div class="b-header-row">
@@ -407,6 +445,14 @@
     <div class="game-over-message">
       <h1 id="gameOverTitle">🎉 YOU WON! 🎉</h1>
       <p id="gameOverText">እንኳን ደስ አለዎት አሸንፈዋል!</p>
+    </div>
+    <button class="btn-play-again" onclick="playAgain()">Play Again</button>
+  </div>
+
+  <div class="game-timeout-screen" id="gameTimeoutScreen">
+    <div class="timeout-message">
+      <h1>⏰ TIME'S UP!</h1>
+      <p>ጊዜ ያለቀ! No winner this round</p>
     </div>
     <button class="btn-play-again" onclick="playAgain()">Play Again</button>
   </div>
@@ -445,6 +491,9 @@
     let markedCells = new Set(["2,2"]);
     let gameActive = true;
     let callInterval = null;
+    let gameStartTime = null;
+    let gameTimeoutInterval = null;
+    let gameTimeoutTimer = null;
 
     const mainGrid = document.getElementById('mainGrid');
     if (mainGrid) {
@@ -517,15 +566,30 @@
         if ('speechSynthesis' in window) {
           window.speechSynthesis.cancel();
           const msg = new SpeechSynthesisUtterance(text);
-          msg.rate = 0.9;
+          msg.rate = 0.8;
           msg.pitch = 1.0;
           msg.volume = 1.0;
-          msg.lang = 'am';
+          msg.lang = 'am-ET';
+          
+          msg.onstart = function() {
+            console.log('Speaking:', text);
+          };
+          
+          msg.onerror = function(event) {
+            console.log('Speech error:', event.error);
+          };
+          
           window.speechSynthesis.speak(msg);
         }
       } catch (e) {
         console.log('Speech synthesis error:', e);
       }
+    }
+
+    function formatGameTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
     }
 
     function generateTicket(seed) {
@@ -559,18 +623,21 @@
 
     function launchActiveGame() {
       gameActive = true;
+      gameStartTime = Date.now();
       calledNumbers = new Set();
       markedCells = new Set(["2,2"]);
 
       const lobbyView = document.getElementById('lobbyView');
       const bingoScreen = document.getElementById('bingoScreen');
       const gameOverScreen = document.getElementById('gameOverScreen');
+      const gameTimeoutScreen = document.getElementById('gameTimeoutScreen');
       const bannerAlert = document.getElementById('bannerAlert');
 
       if (lobbyView) lobbyView.style.display = 'none';
       if (bannerAlert) bannerAlert.style.display = 'none';
       if (bingoScreen) bingoScreen.style.display = 'flex';
       if (gameOverScreen) gameOverScreen.style.display = 'none';
+      if (gameTimeoutScreen) gameTimeoutScreen.style.display = 'none';
 
       const ticket = generateTicket(selectedCard || 74);
       const ticketGrid = document.getElementById('ticketGrid');
@@ -629,16 +696,36 @@
 
         const amL = getAmharicLetter(letter);
         const amN = getAmharicNumber(num);
+        const fullAmharicText = `${amL} ${amN}`;
 
         const callEn = document.getElementById('callEn');
         const callAm = document.getElementById('callAm');
         if (callEn) callEn.innerText = `${letter} ${num}`;
-        if (callAm) callAm.innerText = `${amL} - ${amN}`;
+        if (callAm) callAm.innerText = fullAmharicText;
         
-        speakAmharic(`${amL} ${amN}`);
+        speakAmharic(fullAmharicText);
 
         drawIdx++;
-      }, 3500);
+      }, 5000);
+
+      // Game timeout timer (3 minutes = 180 seconds)
+      let secondsRemaining = 180;
+      const gameTimer = document.getElementById('gameTimer');
+      if (gameTimer) gameTimer.innerText = `Time: ${formatGameTime(secondsRemaining)}`;
+
+      if (gameTimeoutTimer) clearInterval(gameTimeoutTimer);
+      gameTimeoutTimer = setInterval(function() {
+        if (!gameActive) return;
+        
+        secondsRemaining--;
+        if (gameTimer) gameTimer.innerText = `Time: ${formatGameTime(secondsRemaining)}`;
+        
+        if (secondsRemaining <= 0) {
+          clearInterval(gameTimeoutTimer);
+          gameTimeoutTimer = null;
+          endGameTimeout();
+        }
+      }, 1000);
     }
 
     function claimBingo() {
@@ -646,37 +733,61 @@
 
       let won = false;
       
-      // Check rows
       for (let r = 0; r < 5; r++) {
         if ([0,1,2,3,4].every(c => markedCells.has(`${r},${c}`))) won = true;
       }
       
-      // Check columns
       for (let c = 0; c < 5; c++) {
         if ([0,1,2,3,4].every(r => markedCells.has(`${r},${c}`))) won = true;
       }
       
-      // Check diagonals
       if ([0,1,2,3,4].every(i => markedCells.has(`${i},${i}`))) won = true;
       if ([0,1,2,3,4].every(i => markedCells.has(`${i},${4-i}`))) won = true;
 
       if (won) {
         gameActive = false;
+        
         if (callInterval) {
           clearInterval(callInterval);
           callInterval = null;
         }
         
+        if (gameTimeoutTimer) {
+          clearInterval(gameTimeoutTimer);
+          gameTimeoutTimer = null;
+        }
+        
+        window.speechSynthesis.cancel();
+        
         speakAmharic('ቢንጎ! አሸንፈዋል!');
         
-        const bingoScreen = document.getElementById('bingoScreen');
-        const gameOverScreen = document.getElementById('gameOverScreen');
-        
-        if (bingoScreen) bingoScreen.style.display = 'none';
-        if (gameOverScreen) gameOverScreen.style.display = 'flex';
+        setTimeout(() => {
+          const bingoScreen = document.getElementById('bingoScreen');
+          const gameOverScreen = document.getElementById('gameOverScreen');
+          
+          if (bingoScreen) bingoScreen.style.display = 'none';
+          if (gameOverScreen) gameOverScreen.style.display = 'flex';
+        }, 500);
       } else {
         alert('❌ ቢንጎ አልሞላም! ቁጥሮችን በትክክል ይምረጡ።');
       }
+    }
+
+    function endGameTimeout() {
+      gameActive = false;
+      
+      if (callInterval) {
+        clearInterval(callInterval);
+        callInterval = null;
+      }
+      
+      window.speechSynthesis.cancel();
+      
+      const bingoScreen = document.getElementById('bingoScreen');
+      const gameTimeoutScreen = document.getElementById('gameTimeoutScreen');
+      
+      if (bingoScreen) bingoScreen.style.display = 'none';
+      if (gameTimeoutScreen) gameTimeoutScreen.style.display = 'flex';
     }
 
     function playAgain() {
@@ -684,13 +795,18 @@
       calledNumbers = new Set();
       markedCells = new Set(["2,2"]);
       if (callInterval) clearInterval(callInterval);
+      if (gameTimeoutTimer) clearInterval(gameTimeoutTimer);
+      
+      window.speechSynthesis.cancel();
       
       const lobbyView = document.getElementById('lobbyView');
       const gameOverScreen = document.getElementById('gameOverScreen');
+      const gameTimeoutScreen = document.getElementById('gameTimeoutScreen');
       const bannerAlert = document.getElementById('bannerAlert');
       
       if (lobbyView) lobbyView.style.display = 'flex';
       if (gameOverScreen) gameOverScreen.style.display = 'none';
+      if (gameTimeoutScreen) gameTimeoutScreen.style.display = 'none';
       if (bannerAlert) bannerAlert.style.display = 'flex';
       
       countdown = 15;
