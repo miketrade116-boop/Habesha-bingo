@@ -1,1 +1,1 @@
-# Habesha-bingo
+# Star-bingo
